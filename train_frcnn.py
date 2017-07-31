@@ -40,7 +40,8 @@ parser.add_option("--input_weight_path", dest="input_weight_path", help="Input p
 
 (options, args) = parser.parse_args()
 
-if K.image_dim_ordering() == 'tf':
+
+with K.tf.device('/gpu:0'):
 	tf_conf = tf.ConfigProto()
 	tf_conf.gpu_options.per_process_gpu_memory_fraction = 0.5
 	set_session(tf.Session(config=tf_conf))
