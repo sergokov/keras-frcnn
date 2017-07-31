@@ -15,6 +15,8 @@ from keras_frcnn import config, data_generators
 from keras_frcnn import losses as losses
 import keras_frcnn.roi_helpers as roi_helpers
 from keras.utils import generic_utils
+from keras.backend.tensorflow_backend import set_session
+import tensorflow as tf
 
 sys.setrecursionlimit(40000)
 
@@ -37,6 +39,12 @@ parser.add_option("--output_weight_path", dest="output_weight_path", help="Outpu
 parser.add_option("--input_weight_path", dest="input_weight_path", help="Input path for weights. If not specified, will try to load default weights provided by keras.")
 
 (options, args) = parser.parse_args()
+
+if K.image_dim_ordering() == 'tf':
+        config = tf.ConfigProto()
+        config.gpu_options.per_process_gpu_memory_fraction = 0.5
+        set_session(tf.Session(config=config))
+
 
 if not options.train_path:   # if filename is not given
 	parser.error('Error: path to training data must be specified. Pass --path to command line')
