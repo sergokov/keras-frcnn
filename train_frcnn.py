@@ -41,9 +41,9 @@ parser.add_option("--input_weight_path", dest="input_weight_path", help="Input p
 (options, args) = parser.parse_args()
 
 if K.image_dim_ordering() == 'tf':
-        config = tf.ConfigProto()
-        config.gpu_options.per_process_gpu_memory_fraction = 0.5
-        set_session(tf.Session(config=config))
+	tf_conf = tf.ConfigProto()
+	tf_conf.gpu_options.per_process_gpu_memory_fraction = 0.5
+	set_session(tf.Session(config=tf_conf))
 
 
 if not options.train_path:   # if filename is not given
@@ -213,7 +213,7 @@ for epoch_num in range(num_epochs):
 				pos_samples = pos_samples[0]
 			else:
 				pos_samples = []
-			
+
 			rpn_accuracy_rpn_monitor.append(len(pos_samples))
 			rpn_accuracy_for_epoch.append((len(pos_samples)))
 
