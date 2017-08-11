@@ -154,13 +154,14 @@ model_all = Model([img_input, roi_input], rpn[:2] + classifier)
 
 if C.training_from_scratch:
     try:
-        print('loading weights from {}'.format(C.base_net_weights))
+        print('loading base network weights from {}'.format(C.base_net_weights))
         model_rpn.load_weights(C.base_net_weights, by_name=True)
         model_classifier.load_weights(C.base_net_weights, by_name=True)
     except:
         print('Could not load pretrained model weights. Weights can be found in the keras application folder \
             https://github.com/fchollet/keras/tree/master/keras/applications')
 else:
+    print('loading model checkpoint weights from {}'.format(C.base_net_weights))
     model_all.load_weights(C.model_path, by_name=True)
 
 
