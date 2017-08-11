@@ -73,7 +73,8 @@ C.rot_90 = bool(options.rot_90)
 C.model_path = options.output_weight_path
 C.num_rois = int(options.num_rois)
 
-C.training_from_scratch = bool(options.training_from_scratch)
+if options.training_from_scratch == 'False':
+    C.training_from_scratch = False
 
 if options.network == 'vgg':
     C.network = 'vgg'
@@ -154,14 +155,14 @@ model_all = Model([img_input, roi_input], rpn[:2] + classifier)
 
 if C.training_from_scratch:
     try:
-        print('loading base network weights from {}'.format(C.base_net_weights))
+        print('Loading base network weights from {}'.format(C.base_net_weights))
         model_rpn.load_weights(C.base_net_weights, by_name=True)
         model_classifier.load_weights(C.base_net_weights, by_name=True)
     except:
         print('Could not load pretrained model weights. Weights can be found in the keras application folder \
             https://github.com/fchollet/keras/tree/master/keras/applications')
 else:
-    print('loading model checkpoint weights from {}'.format(C.base_net_weights))
+    print('Loading model checkpoint weights from {}'.format(C.model_path))
     model_all.load_weights(C.model_path, by_name=True)
 
 
