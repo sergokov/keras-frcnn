@@ -16,6 +16,7 @@ from keras_frcnn import roi_helpers
 import datetime
 import re
 import subprocess
+import shutil
 
 parser = OptionParser()
 parser.add_option("-d", "--input_dir", dest="input_dir", help="Path to input working directory.")
@@ -25,6 +26,10 @@ parser.add_option("-u", "--output_dir", dest="output_dir", help="Path to output 
 
 img_path = os.path.join(options.input_dir, '')
 output_path = os.path.join(options.output_dir, '')
+
+shutil.rmtree(output_path)
+os.mkdir(output_path)
+
 num_rois = 32
 
 
