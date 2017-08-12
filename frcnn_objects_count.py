@@ -233,7 +233,7 @@ def main():
                     0.5, (255, 255, 255), 1)
         cv2.imwrite(os.path.join(output_path, img_name), img_scaled)
         print(all_dets)
-    print("saving to video..")
+    print("saving to images.")
 
 
 if __name__ == '__main__':
