@@ -27,7 +27,9 @@ parser.add_option("-u", "--output_dir", dest="output_dir", help="Path to output 
 img_path = os.path.join(options.input_dir, '')
 output_path = os.path.join(options.output_dir, '')
 
-shutil.rmtree(output_path)
+
+if os.path.exists(output_path):
+    shutil.rmtree(output_path)
 os.mkdir(output_path)
 
 num_rois = 32
