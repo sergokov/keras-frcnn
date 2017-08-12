@@ -18,10 +18,8 @@ import re
 import subprocess
 
 parser = OptionParser()
-parser.add_option("-d", "--input_dir", dest="input_dir", help="Path to input working directory.",
-                  default="/home/ubuntu/input")
-parser.add_option("-u", "--output_dir", dest="output_dir", help="Path to output working directory.",
-                  default="/home/ubuntu/output")
+parser.add_option("-d", "--input_dir", dest="input_dir", help="Path to input working directory.")
+parser.add_option("-u", "--output_dir", dest="output_dir", help="Path to output working directory.")
 
 (options, args) = parser.parse_args()
 if not options.input_file:  # if filename is not given
