@@ -22,8 +22,6 @@ parser.add_option("-d", "--input_dir", dest="input_dir", help="Path to input wor
 parser.add_option("-u", "--output_dir", dest="output_dir", help="Path to output working directory.")
 
 (options, args) = parser.parse_args()
-if not options.input_file:  # if filename is not given
-    parser.error('Error: path to video input_file must be specified. Pass --input-file to command line')
 
 img_path = os.path.join(options.input_dir, '')
 output_path = os.path.join(options.output_dir, '')
