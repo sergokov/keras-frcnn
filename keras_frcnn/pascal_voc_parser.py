@@ -13,7 +13,7 @@ def get_data(input_path, classes_to_train_on=None):
 
     visualise = False
 
-    data_paths = [os.path.join(input_path, s) for s in ['COCO', 'VOC2012']]
+    data_paths = [os.path.join(input_path, s) for s in os.listdir(input_path) if os.path.isdir(os.path.join(input_path, s))]
 
     print('Parsing annotation files')
 

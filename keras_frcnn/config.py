@@ -58,3 +58,5 @@ class Config:
 		self.model_path = 'model_frcnn.vgg.hdf5'
 
 		self.training_from_scratch = True
+
+		self.fine_tune = False
