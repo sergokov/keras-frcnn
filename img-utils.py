@@ -5,7 +5,8 @@ from optparse import OptionParser
 def rename_img(path):
     dir_files = os.listdir(path)
     for i, f in enumerate(dir_files):
-        os.rename(os.path.join(path ,f), os.path.join(path ,"coke-bottle-%s.%s" % (i, f.split(".")[1])))
+        new_file = "coke-bottle-%s.%s" % (i, f.split(".")[1])
+        os.rename(os.path.join(path ,f), os.path.join(path, new_file))
 
 
 if __name__ == "__main__":
