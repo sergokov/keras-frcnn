@@ -45,12 +45,14 @@ parser.add_option("--input_weight_path", dest="input_weight_path",
                   help="Input path for weights. If not specified, will try to load default weights provided by keras.")
 parser.add_option("--training_from_scratch", dest="training_from_scratch", help="Start training from scratch",
                   default=True)
+parser.add_option("--fine_tune", dest="fine_tune", help="Fine tune model",
+                  default=False)
 
 (options, args) = parser.parse_args()
 
 if K.image_dim_ordering() == 'tf':
     tf_conf = tf.ConfigProto()
-    tf_conf.gpu_options.per_process_gpu_memory_fraction = 0.5
+    tf_conf.gpu_options.per_process_gpu_memory_fraction = 0.3
     set_session(tf.Session(config=tf_conf))
 
 if not options.train_path:  # if filename is not given
@@ -75,6 +77,9 @@ C.num_rois = int(options.num_rois)
 
 if options.training_from_scratch == 'False':
     C.training_from_scratch = False
+
+if options.fine_tune == 'True':
+    C.fine_tune = True
 
 if options.network == 'vgg':
     C.network = 'vgg'
@@ -139,7 +144,7 @@ img_input = Input(shape=input_shape_img)
 roi_input = Input(shape=(None, 4))
 
 # define the base network (resnet here, can be VGG, Inception, etc)
-shared_layers = nn.nn_base(img_input, trainable=True)
+shared_layers = nn.nn_base(img_input, trainable=not C.fine_tune)
 
 # define the RPN, built on the base layers
 num_anchors = len(C.anchor_box_scales) * len(C.anchor_box_ratios)
