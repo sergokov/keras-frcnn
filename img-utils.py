@@ -18,9 +18,10 @@ def analyze_duplicate_images(imgs_path, weights_path):
     x = base_model(input)
     x = Flatten()(x)
     model = Model(inputs=input, outputs=x)
+    # model.load_weights(weights_path)
 
-    features = []
-    dir_files = os.listdir(imgs_path)
+    imgs_features = []
+    dir_files = [os.path.join(imgs_path, p) for p in os.listdir(imgs_path)]
     for img_path in dir_files:
         img = image.load_img(img_path, target_size=(224, 224))
         x = image.img_to_array(img)
@@ -28,24 +29,24 @@ def analyze_duplicate_images(imgs_path, weights_path):
         x = preprocess_input(x)
         features = model.predict(x)
         features_reduce = features.squeeze()
-        features.append(features_reduce)
+        imgs_features.append(features_reduce)
 
-    tree = spatial.KDTree(features)
+    tree = spatial.KDTree(imgs_features)
 
-    for inx, feature in enumerate(features):
-        nearest = tree.query(feature, k=3)
+    for inx, feature in enumerate(imgs_features):
+        nearest = tree.query(feature, k=4)
         plt.subplot(2, 2, 1)
         plt.imshow(cv2.imread(dir_files[inx]))
-        plt.title(dir_files[inx])
+        plt.title(os.path.basename(dir_files[inx]))
         plt.subplot(2, 2, 2)
-        plt.imshow(cv2.imread(dir_files[nearest[0]]))
-        plt.title(dir_files[nearest[0]])
+        plt.imshow(cv2.imread(dir_files[nearest[1][1]]))
+        plt.title(os.path.basename(dir_files[nearest[1][1]]))
         plt.subplot(2, 2, 3)
-        plt.imshow(cv2.imread(dir_files[nearest[1]]))
-        plt.title(dir_files[nearest[1]])
+        plt.imshow(cv2.imread(dir_files[nearest[1][2]]))
+        plt.title(os.path.basename(dir_files[nearest[1][2]]))
         plt.subplot(2, 2, 4)
-        plt.imshow(cv2.imread(dir_files[nearest[2]]))
-        plt.title(dir_files[nearest[2]])
+        plt.imshow(cv2.imread(dir_files[nearest[1][3]]))
+        plt.title(os.path.basename(dir_files[nearest[1][3]]))
         plt.show()
 
 
@@ -60,6 +61,7 @@ if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-a", "--action", dest="action", help="Please specify action to do: rename, analyze")
     parser.add_option("-p", "--dir-path", dest="dir_path", help="Please specify dir images path.")
+    parser.add_option("-w", "--weights-path", dest="weights_path", help="Please specify weights path.")
 
     (options, args) = parser.parse_args()
     if options.action is None or options.action not in ['rename', 'analyze']:
@@ -72,4 +74,4 @@ if __name__ == "__main__":
         rename_img(options.dir_path)
 
     if options.action in 'analyze':
-        analyze_duplicate_images(options.dir_path, None)
+        analyze_duplicate_images(options.dir_path, options.weights_path)
