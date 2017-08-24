@@ -35,19 +35,24 @@ def analyze_duplicate_images(imgs_path, weights_path):
 
     for inx, feature in enumerate(imgs_features):
         nearest = tree.query(feature, k=4)
-        plt.subplot(2, 2, 1)
-        plt.imshow(cv2.imread(dir_files[inx]))
-        plt.title(os.path.basename(dir_files[inx]))
-        plt.subplot(2, 2, 2)
-        plt.imshow(cv2.imread(dir_files[nearest[1][1]]))
-        plt.title(os.path.basename(dir_files[nearest[1][1]]))
-        plt.subplot(2, 2, 3)
-        plt.imshow(cv2.imread(dir_files[nearest[1][2]]))
-        plt.title(os.path.basename(dir_files[nearest[1][2]]))
-        plt.subplot(2, 2, 4)
-        plt.imshow(cv2.imread(dir_files[nearest[1][3]]))
-        plt.title(os.path.basename(dir_files[nearest[1][3]]))
-        plt.show()
+        try:
+           plt.subplot(2, 2, 1)
+           plt.imshow(cv2.imread(dir_files[inx]))
+           plt.title(os.path.basename(dir_files[inx]))
+           plt.subplot(2, 2, 2)
+           plt.imshow(cv2.imread(dir_files[nearest[1][1]]))
+           plt.title(os.path.basename(dir_files[nearest[1][1]]))
+           plt.subplot(2, 2, 3)
+           plt.imshow(cv2.imread(dir_files[nearest[1][2]]))
+           plt.title(os.path.basename(dir_files[nearest[1][2]]))
+           plt.subplot(2, 2, 4)
+           plt.imshow(cv2.imread(dir_files[nearest[1][3]]))
+           plt.title(os.path.basename(dir_files[nearest[1][3]]))
+           plt.show()
+        except TypeError as e:
+            for img_inx in range(0, len(nearest[1])):
+                print(dir_files[nearest[1][img_inx]])
+            print(e)
 
 
 def rename_img(path):
