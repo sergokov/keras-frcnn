@@ -189,6 +189,9 @@ model_classifier.compile(optimizer='sgd', loss='mse')
 all_imgs, _, _ = get_data(options.test_path, classes_to_train_on=['bottle'])
 val_imgs = [s for s in all_imgs if s['imageset'] == 'val']
 
+print('Num all samples {}'.format(len(all_imgs)))
+print('Num val samples {}'.format(len(val_imgs)))
+
 all_imgs_MAP = []
 T = {}
 P = {}
