@@ -124,8 +124,8 @@ random.shuffle(all_imgs)
 
 num_imgs = len(all_imgs)
 
-train_imgs = [s for s in all_imgs if s['imageset'] == 'trainval']
-val_imgs = [s for s in all_imgs if s['imageset'] == 'test']
+train_imgs = [s for s in all_imgs if s['imageset'] == 'train']
+val_imgs = [s for s in all_imgs if s['imageset'] == 'val']
 
 print('Num train samples {}'.format(len(train_imgs)))
 print('Num val samples {}'.format(len(val_imgs)))

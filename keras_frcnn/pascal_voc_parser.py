@@ -21,22 +21,22 @@ def get_data(input_path, classes_to_train_on=None):
 
         annot_path = os.path.join(data_path, 'Annotations')
         imgs_path = os.path.join(data_path, 'JPEGImages')
-        imgsets_path_trainval = os.path.join(data_path, 'ImageSets', 'Main', 'trainval.txt')
-        imgsets_path_test = os.path.join(data_path, 'ImageSets', 'Main', 'test.txt')
+        imgsets_path_trainval = os.path.join(data_path, 'ImageSets', 'Main', 'train.txt')
+        imgsets_path_test = os.path.join(data_path, 'ImageSets', 'Main', 'val.txt')
 
-        trainval_files = []
-        test_files = []
+        train_files = []
+        val_files = []
         try:
             with open(imgsets_path_trainval) as f:
                 for line in f:
-                    trainval_files.append(line.strip() + '.jpg')
+                    train_files.append(line.strip() + '.jpg')
         except Exception as e:
             print(e)
 
         try:
             with open(imgsets_path_test) as f:
                 for line in f:
-                    test_files.append(line.strip() + '.jpg')
+                    val_files.append(line.strip() + '.jpg')
         except Exception as e:
             if data_path[-7:] == 'VOC2012':
                 # this is expected, most pascal voc distibutions dont have the test.txt file
@@ -86,12 +86,12 @@ def get_data(input_path, classes_to_train_on=None):
                             {'class': class_name, 'x1': x1, 'x2': x2, 'y1': y1, 'y2': y2})
 
                 if is_required_class_exist:
-                    if element_filename in trainval_files:
-                        annotation_data['imageset'] = 'trainval'
-                    elif element_filename in test_files:
-                        annotation_data['imageset'] = 'test'
+                    if element_filename in train_files:
+                        annotation_data['imageset'] = 'train'
+                    elif element_filename in val_files:
+                        annotation_data['imageset'] = 'val'
                     else:
-                        annotation_data['imageset'] = 'trainval'
+                        annotation_data['imageset'] = 'train'
 
                     all_imgs.append(annotation_data)
 

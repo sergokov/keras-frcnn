@@ -62,7 +62,7 @@ def get_map(pred, gt, f):
 		T[pred_class].append(int(found_match))
 
 	for gt_box in gt:
-		if not gt_box['bbox_matched'] and not gt_box['difficult']:
+		if not gt_box['bbox_matched'] and not ('difficult' in gt_box and not gt_box['difficult']):
 			if gt_box['class'] not in P:
 				P[gt_box['class']] = []
 				T[gt_box['class']] = []
@@ -79,6 +79,7 @@ sys.setrecursionlimit(40000)
 parser = OptionParser()
 
 parser.add_option("-p", "--path", dest="test_path", help="Path to test data.")
+parser.add_option("--model_path", dest="model_path", help="Model path.", default='./model_frcnn.hdf5')
 parser.add_option("-n", "--num_rois", dest="num_rois",
 				help="Number of ROIs per iteration. Higher means more memory use.", default=32)
 parser.add_option("--config_filename", dest="config_filename", help=
@@ -104,6 +105,10 @@ config_output_filename = options.config_filename
 
 with open(config_output_filename, 'r') as f_in:
 	C = pickle.load(f_in)
+
+if not options.model_path:
+	parser.error('Error: path to model must be specified. Pass --model_path to command line')
+C.model_path = options.model_path
 
 # turn off any data augmentation at test time
 C.use_horizontal_flips = False
@@ -181,14 +186,14 @@ model_classifier.load_weights(C.model_path, by_name=True)
 model_rpn.compile(optimizer='sgd', loss='mse')
 model_classifier.compile(optimizer='sgd', loss='mse')
 
-all_imgs, _, _ = get_data(options.test_path)
-test_imgs = [s for s in all_imgs if s['imageset'] == 'test']
+all_imgs, _, _ = get_data(options.test_path, classes_to_train_on=['bottle'])
+val_imgs = [s for s in all_imgs if s['imageset'] == 'val']
 
-
+all_imgs_MAP = []
 T = {}
 P = {}
-for idx, img_data in enumerate(test_imgs):
-	print('{}/{}'.format(idx,len(test_imgs)))
+for idx, img_data in enumerate(val_imgs):
+	print('{}/{}'.format(idx, len(val_imgs)))
 	st = time.time()
 	filepath = img_data['filepath']
 
@@ -279,6 +284,8 @@ for idx, img_data in enumerate(test_imgs):
 		ap = average_precision_score(T[key], P[key])
 		print('{} AP: {}'.format(key, ap))
 		all_aps.append(ap)
-	print('mAP = {}'.format(np.mean(np.array(all_aps))))
-	#print(T)
-	#print(P)
+	map = np.mean(np.array(all_aps))
+	all_imgs_MAP.append(map)
+	print('mAP = {}'.format(map))
+
+print('Validation dataset mAP = {}'.format(np.mean(np.array(all_imgs_MAP))))
