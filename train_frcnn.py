@@ -6,6 +6,7 @@ import time
 import numpy as np
 from optparse import OptionParser
 import pickle
+import os
 
 from keras import backend as K
 from keras.optimizers import Adam, SGD, RMSprop
@@ -94,10 +95,10 @@ else:
 
 # check if weight path was passed via command line
 if options.input_weight_path:
-    C.base_net_weights = options.input_weight_path
+    C.input_weight_path = options.input_weight_path
 else:
     # set the path to weights based on backend and model
-    C.base_net_weights = nn.get_weight_path()
+    C.input_weight_path = nn.get_weight_path()
 
 all_imgs, classes_count, class_mapping = get_data(options.train_path, classes_to_train_on=['bottle'])
 
@@ -158,17 +159,23 @@ model_classifier = Model([img_input, roi_input], classifier)
 # this is a model that holds both the RPN and the classifier, used to load/save weights for the models
 model_all = Model([img_input, roi_input], rpn[:2] + classifier)
 
+
+def save_model(model, model_path, epoch_number):
+    model_name = "model_frcnn_" + epoch_number + ".hdf5"
+    model.save_weights(os.path.join(model_path, model_name))
+
+
 if C.training_from_scratch:
     try:
-        print('Loading base network weights from {}'.format(C.base_net_weights))
-        model_rpn.load_weights(C.base_net_weights, by_name=True)
-        model_classifier.load_weights(C.base_net_weights, by_name=True)
+        print('Loading base network weights from {}'.format(C.input_weight_path))
+        model_rpn.load_weights(C.input_weight_path, by_name=True)
+        model_classifier.load_weights(C.input_weight_path, by_name=True)
     except:
         print('Could not load pretrained model weights. Weights can be found in the keras application folder \
             https://github.com/fchollet/keras/tree/master/keras/applications')
 else:
-    print('Loading model checkpoint weights from {}'.format(C.model_path))
-    model_all.load_weights(C.model_path, by_name=True)
+    print('Loading model checkpoint weights from {}'.format(C.input_weight_path))
+    model_all.load_weights(C.input_weight_path, by_name=True)
 
 
 optimizer = Adam(lr=1e-5)
@@ -311,7 +318,7 @@ for epoch_num in range(num_epochs):
                     if C.verbose:
                         print('Total loss decreased from {} to {}, saving weights'.format(best_loss, curr_loss))
                     best_loss = curr_loss
-                    model_all.save_weights(C.model_path)
+                    save_model(model_all, C.model_path, epoch_num)
 
                 break
 
