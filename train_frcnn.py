@@ -161,7 +161,7 @@ model_all = Model([img_input, roi_input], rpn[:2] + classifier)
 
 
 def save_model(model, model_path, epoch_number):
-    model_name = "model_frcnn_" + epoch_number + ".hdf5"
+    model_name = "model_frcnn_" + str(epoch_number) + ".hdf5"
     model.save_weights(os.path.join(model_path, model_name))
 
 
