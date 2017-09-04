@@ -21,6 +21,7 @@ from keras.backend.tensorflow_backend import set_session
 import tensorflow as tf
 
 parser = OptionParser()
+parser.add_option("--model_path", dest="model_path", help="Model path.", default='./model_frcnn.hdf5')
 parser.add_option("-d", "--input_dir", dest="input_dir", help="Path to input working directory.")
 parser.add_option("-u", "--output_dir", dest="output_dir", help="Path to output working directory.")
 
@@ -84,6 +85,10 @@ def main():
 
     with open(config_output_filename, 'r') as f_in:
         C = pickle.load(f_in)
+
+    if not options.model_path:
+        parser.error('Error: path to model must be specified. Pass --model_path to command line')
+    C.model_path = options.model_path
 
     # turn off any data augmentation at test time
     C.use_horizontal_flips = False
