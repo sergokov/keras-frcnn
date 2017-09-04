@@ -17,10 +17,17 @@ import datetime
 import re
 import subprocess
 import shutil
+from keras.backend.tensorflow_backend import set_session
+import tensorflow as tf
 
 parser = OptionParser()
 parser.add_option("-d", "--input_dir", dest="input_dir", help="Path to input working directory.")
 parser.add_option("-u", "--output_dir", dest="output_dir", help="Path to output working directory.")
+
+if K.image_dim_ordering() == 'tf':
+    tf_conf = tf.ConfigProto()
+    tf_conf.gpu_options.per_process_gpu_memory_fraction = 0.5
+    set_session(tf.Session(config=tf_conf))
 
 (options, args) = parser.parse_args()
 

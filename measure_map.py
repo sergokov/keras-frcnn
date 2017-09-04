@@ -13,6 +13,8 @@ from keras.models import Model
 from keras_frcnn import roi_helpers
 from keras_frcnn import data_generators
 from sklearn.metrics import average_precision_score
+from keras.backend.tensorflow_backend import set_session
+import tensorflow as tf
 
 
 def get_map(pred, gt, f):
@@ -90,6 +92,13 @@ parser.add_option("-o", "--parser", dest="parser", help="Parser to use. One of s
 
 (options, args) = parser.parse_args()
 
+
+if K.image_dim_ordering() == 'tf':
+    tf_conf = tf.ConfigProto()
+    tf_conf.gpu_options.per_process_gpu_memory_fraction = 0.5
+    set_session(tf.Session(config=tf_conf))
+
+
 if not options.test_path:   # if filename is not given
 	parser.error('Error: path to test data must be specified. Pass --path to command line')
 
@@ -121,7 +130,7 @@ img_path = options.test_path
 def format_img(img, C):
 	img_min_side = float(C.im_size)
 	(height,width,_) = img.shape
-	
+
 	if width <= height:
 		f = img_min_side/width
 		new_height = int(f * height)
